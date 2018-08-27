@@ -52,7 +52,7 @@ class WebsocketTransport(Transport):
             error = websocket_error
         raise self._error(error)
 
-    def _connect(self, url, **options):
+    def _connect(self, urls, **options):
         timeout = options.pop('timeout', None)
         event_queue_sleep_time = options.pop('event_queue_sleep_time', 1e-6)
         response_sleep_time = options.pop('response_sleep_time', 1e-6)
@@ -60,6 +60,7 @@ class WebsocketTransport(Transport):
         self._websocket.timeout = timeout
         self._event_queue_sleep_time = event_queue_sleep_time
         self._response_sleep_time = response_sleep_time
+        url = urls.getUrl('auth_url')
         self._websocket_call(self._websocket.connect, url, **options)
         self._connected = True
         event_thread = threading.Thread(target=self._event)

@@ -46,13 +46,6 @@ class DeviceHive(object):
         if self._transport.connected:
             self._transport.disconnect()
 
-    @staticmethod
-    def transport_name(transport_url):
-        if transport_url[0:4] == 'http':
-            return 'http'
-        if transport_url[0:2] == 'ws':
-            return 'websocket'
-
     @property
     def transport(self):
         return self._transport
@@ -61,8 +54,8 @@ class DeviceHive(object):
     def handler(self):
         return self._transport.handler.handler
 
-    def connect(self, transport_url, **options):
-        self._transport_name = self.transport_name(transport_url)
+    def connect(self, transport_urls, **options):
+        self._transport_name = transport_urls.getTransportName('auth_url')
         assert self._transport_name, 'Unexpected transport url scheme'
         transport_keep_alive = options.pop('transport_keep_alive', True)
         transport_alive_sleep_time = options.pop('transport_alive_sleep_time',
@@ -80,13 +73,13 @@ class DeviceHive(object):
         self._init_transport()
         if not transport_keep_alive:
             self._ensure_transport_disconnect()
-            self._transport.connect(transport_url, **options)
+            self._transport.connect(transport_urls, **options)
             return
         connect_time = time.time()
         num_connect = 0
         while True:
             self._ensure_transport_disconnect()
-            self._transport.connect(transport_url, **options)
+            self._transport.connect(transport_urls, **options)
             while self._transport.is_alive():
                 time.sleep(transport_alive_sleep_time)
             exception_info = self._transport.exception_info

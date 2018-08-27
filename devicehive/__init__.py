@@ -22,6 +22,7 @@ from .api_request import ApiRequestError
 from .api_response import ApiResponseError
 from .device import DeviceError
 from .network import NetworkError
+from .transport_urls import TransportUrls
 from .device_type import DeviceTypeError
 from .subscription import SubscriptionError
 from .user import UserError
